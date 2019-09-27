@@ -1,0 +1,501 @@
+---
+API: 2.1
+OpenSesame: 3.2.8
+Platform: nt
+---
+set width 1024
+set uniform_coordinates yes
+set title "Modified Wisconsin Card Sorting Test (mWCST)"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend legacy
+set keyboard_backend legacy
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "C:\\Users\\matt\\AppData\\Local\\Temp"
+set disable_garbage_collection yes
+set description "As described in Nelson (1976, Cortex)"
+set coordinates uniform
+set compensation 0
+set color_backend legacy
+set clock_backend legacy
+set canvas_backend legacy
+set background gray
+
+define notepad README
+	__note__
+	# Modified Wisconsin Card Sorting Test (MWCST)
+	
+	This is an implementation of the MWCST for [OpenSesame 3.2](http://osdoc.cogsci.nl/). The test is based on:
+	
+	- Nelson, H. E. (1976). A modified card sorting test sensitive to frontal lobe defects. *Cortex*, *12*(4), 313–324. https://doi.org/10.1016/S0010-9452(76)80035-4
+	
+	
+	
+	## Procedure
+	
+	Four *stimulus cards* are shown at the top of the screen. One *response card* is shown at the bottom. Each cards have three features:
+	
+	- color: red, blue, green, or orange
+	- shape: star, triangle, cross, or circle
+	- number: 1, 2, 3, or 4
+	 
+	Each stimulus card is unique in a combination of color, shape, and number. The response card matches three of the stimulus cards on exactly one feature, and does not match one of the stimulus cards at all.
+	
+	The participant sorts the response card by clicking on one of the stimulus cards. The sorting rule is the dimension on which the stimulus and response cards should match (e.g. sort based on color). The participant is not told the sorting rule.
+	
+	On the first trial, the sorting is based on how the participant sorts. That is, the participant is always correct, unless he or she clicks on a fully non-matching stimulus card. This sorting rule is then kept until the participant has responded correctly a certain number of times in a row. The sorting rule is then reset, again based on how the participant sorts, except that the sorting rule has to be different from before.
+	
+	
+	## Settings
+	
+	In the experiment, the `settings` item contains several configurable options.
+	__end__
+	set description "A simple notepad to document your experiment. This plug-in does nothing."
+
+define loop block_loop
+	set source_file ""
+	set source table
+	set repeat "[=NUMBER_OF_TRIALS]"
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 empty_column ""
+	run trial_sequence
+
+define sketchpad cards
+	set duration 500
+	set description "Displays stimuli"
+	draw rect color=white fill=1 h=224 name=stimcard2 penwidth=1 show_if=always w=128 x=32 y=-256 z_index=0
+	draw rect color=white fill=1 h=224 name=stimcard3 penwidth=1 show_if=always w=128 x=224 y=-256 z_index=0
+	draw rect color=white fill=1 h=224 name=stimcard1 penwidth=1 show_if=always w=128 x=-160 y=-256 z_index=0
+	draw rect color=white fill=1 h=224 name=stimcard0 penwidth=1 show_if=always w=-128 x=-224 y=-256 z_index=0
+	draw rect color=white fill=1 h=224 name=responsecard penwidth=1 show_if=always w=128 x=-64 y=96 z_index=0
+	draw rect color=black fill=0 h=224 name=highlight0 penwidth=15 show_if=always w=128 x=-352 y=-256 z_index=0
+	draw rect color=black fill=0 h=224 name=highlight1 penwidth=15 show_if=always w=128 x=-160 y=-256 z_index=0
+	draw rect color=black fill=0 h=224 name=highlight2 penwidth=15 show_if=always w=128 x=32 y=-256 z_index=0
+	draw rect color=black fill=0 h=224 name=highlight3 penwidth=15 show_if=always w=128 x=224 y=-256 z_index=0
+	draw rect color=black fill=0 h=224 name=highlightresponsecard penwidth=15 show_if=always w=128 x=-64 y=96 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=32 html=yes show_if=always text="Click on the card at the top:" x=0 y=-320 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=32 html=yes show_if=always text="That matches the card at the bottom:" x=0 y=32 z_index=0
+
+define inline_script change_sorting_rule
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	# Reset the sorting rule!
+	if need_to_change_sorting_rule():
+		var.invalid_sorting_rule = var.participant_sorting_rule	
+		var.sorting_rule = None	
+		var.change_sorting_rule = 1
+	else:
+		var.change_sorting_rule = 0
+	__end__
+
+define mouse_response choose_card
+	set timeout infinite
+	set show_cursor yes
+	set linked_sketchpad cards
+	set flush yes
+	set event_type mouseclick
+	set duration mouseclick
+	set description "Collects mouse responses"
+
+define inline_script draw_card_functions
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	def interweave(*iterators):
+		
+		while any(iterators):
+			for i in iterators:
+				yield i.pop(0)
+	
+	
+	def draw_triangle(x, y, **kwargs):
+		
+		return Polygon(
+			xy_circle(rho=SHAPE_SIZE, n=3, pole=(x, y), phi0=-90),
+			**kwargs
+		)
+		
+		
+	def draw_circle(x, y, **kwargs):
+		
+		return Circle(x, y, r=SHAPE_SIZE, **kwargs)
+		
+		
+	def draw_cross(x, y, **kwargs):
+		
+		v = list(interweave(
+			xy_circle(rho=SHAPE_SIZE, n=4, pole=(x, y), phi0=-22.5),
+			xy_circle(rho=SHAPE_SIZE, n=4, pole=(x, y), phi0=22.5),
+			xy_circle(rho=SHAPE_SIZE/2, n=4, pole=(x, y), phi0=45)
+		))
+		return Polygon(v, **kwargs)	
+		
+		
+	def draw_star(x, y, **kwargs):
+		
+		v = list(interweave(
+			xy_circle(rho=SHAPE_SIZE/2.5, n=5, pole=(x, y), phi0=90),
+			xy_circle(rho=SHAPE_SIZE, n=5, pole=(x, y), phi0=90+360/10),
+		))
+		return Polygon(v, **kwargs)		
+		
+	
+	def draw_element(shape, x, y, **kwargs):
+		
+		if shape == 'circle':
+			return draw_circle(x, y, **kwargs)
+		if shape == 'triangle':
+			return draw_triangle(x, y, **kwargs)
+		if shape == 'cross':
+			return draw_cross(x, y, **kwargs)
+		if shape == 'star':
+			return draw_star(x, y, **kwargs)
+		raise ValueError('Invalid shape: {}'.format(shape))
+	
+	
+	def draw_shapes(rect, color, shape, number):
+		
+		
+		x, y, w, h = rect
+		elements = []
+		for dx, dy in SHAPE_LOCATIONS[number]:		
+			sx = x + dx*w*SHAPE_ECC[0] + w//2
+			sy = y + dy*h*SHAPE_ECC[1] + h//2
+			elements.append(draw_element(shape, sx, sy, color=color, fill=True))
+		return elements
+		
+		
+	def draw_stimcards():
+		
+		canvas = items['cards'].canvas
+		for i in range(4):
+			canvas += draw_shapes(
+				canvas['stimcard%d' % i].rect,
+				stim_colors[i],
+				stim_shapes[i],
+				stim_numbers[i]
+			)
+			
+			
+	def draw_responsecard():
+		
+		# Draw the response card
+		canvas = items['cards'].canvas
+		canvas += draw_shapes(
+			canvas['responsecard'].rect,
+			resp_color,
+			resp_shape,
+			resp_number
+		)	
+	
+	
+	def draw_feedback():
+		
+		items['cards'].canvas['highlight%d' % response].color = (
+			'green'
+			if var.correct
+			else 'red'
+		)
+	__end__
+
+define inline_script draw_cards
+	set description "Executes Python code"
+	___run__
+	# Reshuffle the stimulus on the first trial, or on every trial if
+	# RESHUFFLE_STIMCARDS is True.
+	if RESHUFFLE_STIMCARDS or not var.count_trial_sequence:
+		print('Reshuffle stimcards')
+		stim_colors = COLORS[:]
+		stim_shapes = SHAPES[:]
+		stim_numbers = NUMBERS[:]
+		random.shuffle(stim_colors)
+		random.shuffle(stim_shapes)
+		random.shuffle(stim_numbers)
+		
+	# Always create a new deck if RESHUFFLE_DECK is True. Otherwise, only create a
+	# new deck if the current deck is empty.
+	print('Card on deck: %d' % len(deck))
+	if RESHUFFLE_DECK:
+		deck = new_deck()
+	while True:
+		if not deck:		
+			deck = new_deck()
+		# Get the top card from the deck and break if this is a valid card
+		resp_color, resp_shape, resp_number = deck.pop()
+		if valid_responsecard(resp_color, resp_shape, resp_number):
+			break
+			
+	# Update the canvas!
+	draw_stimcards()
+	draw_responsecard()
+	items['cards'].canvas.show()
+	__end__
+	set _prepare ""
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run README always
+	run settings always
+	run imports always
+	run draw_card_functions always
+	run other_functions always
+	run initialize always
+	run instructions always
+	run block_loop always
+	run goodbye always
+
+define inline_script feedback
+	set description "Executes Python code"
+	___run__
+	# Check which card was clicked. If none of the stimulus cards was clicked,
+	# collect another click.
+	while True:
+		response = selected_stimcard()
+		if response is not None:
+			break
+		items['choose_card'].run()
+		
+	# Set the participants sorting rule, but not if it's an invalid rule.
+	var.participant_sorting_rule = determine_participant_sorting_rule(
+		response, resp_color, resp_shape, resp_number
+	)
+	if var.participant_sorting_rule == var.invalid_sorting_rule:
+		var.participant_sorting_rule = None	
+	
+	# If there's currently no sorting rule, we set the sorting rule to the
+	# participant's sorting rule
+	if var.sorting_rule is None:
+		var.sorting_rule = var.participant_sorting_rule
+	
+	# Determine whether the particpant's sorting rule was correct, remember this
+	# and print out some info
+	var.correct = int(
+		var.sorting_rule is not None
+		and var.sorting_rule == var.participant_sorting_rule
+	)
+	correct_history.append(var.correct)
+	print('response = %s' % response)
+	print('sorting_rule = %s' % var.sorting_rule)
+	print('participant_sorting_rule = %s' % var.participant_sorting_rule)
+	print('correct = %s' % var.correct)
+	
+	# Show the feedback display!
+	draw_feedback()
+	items['cards'].canvas.show()
+	clock.sleep(500)
+	__end__
+	set _prepare ""
+
+define form_text_display goodbye
+	set timeout infinite
+	set spacing 10
+	set rows "1;4;1"
+	set only_render no
+	set ok_text Quit
+	set margins "50;50;50;50"
+	set form_title "Finished!"
+	__form_text__
+	The experiment is finished! Thank you for your participation.
+	__end__
+	set description "A simple text display form"
+	set cols "1;1;1"
+	set _theme gray
+	widget 0 0 3 1 label text="[form_title]"
+	widget 0 1 3 1 label center=no text="[form_text]"
+	widget 1 2 1 1 button text="[ok_text]"
+
+
+define inline_script imports
+	set description "Executes Python code"
+	___run__
+	import itertools
+	import random
+	__end__
+	set _prepare ""
+
+define inline_script initialize
+	set description "Executes Python code"
+	___run__
+	var.sorting_rule = None
+	var.invalid_sorting_rule = None
+	var.change_sorting_rule = 0
+	correct_history = []
+	deck = []
+	Mouse().show_cursor()
+	__end__
+	set _prepare ""
+
+define form_text_display instructions
+	set timeout infinite
+	set spacing 10
+	set rows "1;4;1"
+	set only_render no
+	set ok_text "I understand"
+	set margins "50;50;50;50"
+	set form_title Instructions
+	__form_text__
+	You will see a row of four cards at the top of the screen, and one card at the bottom.
+	
+	Your task is to sort the bottom card. You do this by clicking with the mouse on one of the cards at the top.
+	
+	You need to find out the sorting rule yourself by trying out different ways to sort the card! After every attempt you will get feedback indicating whether you sorted correctly (green color) or incorrectly (red color).
+	__end__
+	set description "A simple text display form"
+	set cols "1;1;1"
+	set _theme gray
+	widget 0 0 3 1 label text="[form_title]"
+	widget 0 1 3 1 label center=no text="[form_text]"
+	widget 1 2 1 1 button text="[ok_text]"
+
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log no
+	log change_sorting_rule
+	log participant_sorting_rule
+	log response
+	log response_time
+	log sorting_rule
+	log count_trial_sequence
+	log correct
+	log subject_nr
+
+define sketchpad new_sorting_rule_instructions
+	set duration mouseclick
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=sans font_italic=no font_size=32 html=yes show_if=always text="The rules have now changed.<br />I want you to find another rule.<br /><br />Click to continue." x=0 y=0 z_index=0
+
+define inline_script other_functions
+	set description "Executes Python code"
+	___run__
+	def need_to_change_sorting_rule():
+		
+		"""Checks whether the sorting rule needs to be changed. This happens after
+		a specified number of correct responses, but never twice in a row.
+		"""
+	
+		if var.change_sorting_rule:
+			return False
+		return sum(correct_history[-CHANGE_AFTER_CORRECT:]) == CHANGE_AFTER_CORRECT
+		
+	
+	def determine_participant_sorting_rule(
+		response, resp_color, resp_shape, resp_number
+	):
+		
+		"""Check the participant's sorting rule by seeing if the clicked on a
+		stimcard with the same color, shape, or number as the responsecard. It's
+		also possible to click on a completely non-matching card, in which case None
+		is returned.
+		"""
+		
+		# Determine the sorting rule that the participant used
+		if stim_colors[response] == resp_color:
+			return 'color'
+		if stim_shapes[response] == resp_shape:
+			return 'shape'
+		elif stim_numbers[response] == resp_number:
+			return 'number'
+	
+	
+	def valid_responsecard(resp_color, resp_shape, resp_number):
+		
+		"""Checks that the response card matches at most one feature of the stimulus
+		cards.
+		"""
+		
+		for stim_color, stim_shape, stim_number in zip(
+			stim_colors, stim_shapes, stim_numbers
+		):
+			if (
+				(stim_color == resp_color)
+				+ (stim_shape == resp_shape)
+				+ (stim_number == resp_number)
+			) > 1:
+				return False
+		return True
+		
+	
+	def selected_stimcard():
+		
+		"""Determine which stimcard the participant clicked on."""
+		
+		for roi in var.cursor_roi.split(';'):
+			if roi.startswith('stimcard'):
+				return int(roi[-1:])
+		return None
+	
+	
+	def new_deck():
+	
+		"""Creates a new deck of stimcards."""
+			
+		print('New deck!')
+		deck = list(itertools.product(COLORS, SHAPES, NUMBERS))
+		random.shuffle(deck)
+		return deck
+	__end__
+	set _prepare ""
+
+define inline_script settings
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	# Set to False to keep the same stimulus cards
+	RESHUFFLE_STIMCARDS = True
+	# Set to True to create a freshly shuffled deck on each trial
+	RESHUFFLE_DECK = False
+	# The number of correct response that should trigger a change of the sorting
+	# rule
+	CHANGE_AFTER_CORRECT = 5
+	# The number of experimental trials
+	NUMBER_OF_TRIALS = 10
+	# The card features
+	COLORS = ['red', 'green', 'orange', 'blue']
+	SHAPES = ['star', 'triangle', 'cross', 'circle']
+	NUMBERS = [1, 2, 3, 4]
+	
+	# Some visual properties for the cards
+	SHAPE_SIZE = 24
+	SHAPE_ECC = .4, .5
+	SHAPE_LOCATIONS = {
+		1: [ (0, 0) ],
+		2: [ (0, -.5), (0, .5) ],
+		3: [ (-.5, -.5), (0, 0), (.5, .5) ],
+		4: [ (-.5, -.5), (.5, -.5), (-.5, .5), (.5, .5) ]
+	}
+	__end__
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run change_sorting_rule always
+	run new_sorting_rule_instructions "[change_sorting_rule] = 1"
+	run cards always
+	run draw_cards always
+	run choose_card always
+	run feedback always
+	run logger always
+
