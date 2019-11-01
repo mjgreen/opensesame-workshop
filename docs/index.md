@@ -1,3 +1,3 @@
 # Workshop index
 
-[handout](sample-handout.pdf)
+[handout](../handout/handout.pdf)
