@@ -1,1 +1,8 @@
+# Pycharm files directory
 .idea
+# Latex's waste by-products
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
