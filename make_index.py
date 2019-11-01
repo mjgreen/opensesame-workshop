@@ -33,9 +33,9 @@ def main():
     fnames = [fname for fname in sorted(os.listdir(args.directory))
               if fname not in EXCLUDED]
     header = (args.header if args.header else os.path.basename(args.directory))
-    with open("docs/index.html", "w+") as f:
+    with open("index.html", "w+") as f:
         f.write(Template(INDEX_TEMPLATE).render(names=fnames, header=header))
-    print(Template(INDEX_TEMPLATE).render(names=fnames, header=header))
+    # print(Template(INDEX_TEMPLATE).render(names=fnames, header=header))
 
 
 if __name__ == '__main__':
