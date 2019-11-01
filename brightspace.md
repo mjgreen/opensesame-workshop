@@ -10,4 +10,4 @@ The format of the workshop is such that some of the content will be presented in
 
 If you want to come along at the start just to see what it's like, you're welcome to do that, and if you decide that it's not for you, you can leave any time and there will be no hard feelings - same if you can only come for part of the 2 hours and need to arrive late or leave early.
 
-- Matt Green
+-- Matt Green
