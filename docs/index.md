@@ -2,4 +2,4 @@
 
 [link to file in docs/](test.md)
 
-[handout](sample_handout.pdf)
+[handout](sample-handout.pdf)
