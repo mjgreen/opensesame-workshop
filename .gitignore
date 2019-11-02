@@ -12,3 +12,5 @@
 *.synctex.gz
 # csv files from running the experiments
 *.csv
+# latex editor cruft
+.handout.tex.swp
