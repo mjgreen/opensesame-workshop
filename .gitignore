@@ -8,3 +8,5 @@
 *.log
 *.out
 *.toc
+# csv files from running the experiments
+*.csv
