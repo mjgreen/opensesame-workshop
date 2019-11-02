@@ -1,6 +1,6 @@
 # Pycharm files directory
 .idea
-# Latex's waste by-products
+# Latex by-products
 *.aux
 *.bib
 *.bbl
