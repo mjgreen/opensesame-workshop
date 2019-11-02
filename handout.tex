@@ -3,9 +3,11 @@
 \usetikzlibrary{shapes,arrows}
 \usepackage{hyperref}
 
-\title{OpenSesame workshop handout \& workbook}
-\date{Wednesday 6th November 5pm -- 7pm} % without \date command, current date is supplied
-\author{Matt Green}
+\title{OpenSesame workshop 2019}% handout \& workbook}
+\date{Nov 6th 5pm -- 7pm \& Nov 7th 9am -- 11am in P105}
+\author{Matt Green \href{mailto:mgreen@bournemouth.ac.uk}{mgreen@bournemouth.ac.uk} }
+%\author{Matt Green mgreen@bournemouth.ac.uk}
+%\date{https://github.com/mjgreen/opensesame-workshop/archive/master.zip}
 
 %\geometry{showframe} % display margins for debugging page layout
 
@@ -31,15 +33,21 @@
 %\newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
 
 \begin{document}
-\bibliographystyle{plain}
-\nobibliography{handout}
+%\bibliographystyle{plain}
+%\nobibliography{handout}
 \maketitle
-The materials for the workshop can be downloaded from this link: \href{https://github.com/mjgreen/opensesame_workshop_BU/archive/master.zip}
+%\begin{abstract}\url{https://github.com/mjgreen/opensesame-workshop/archive/master.zip}\end{abstract}
+%\sidenote{\url{https://github.com/mjgreen/opensesame-workshop/archive/master.zip}}
+%\marginnote{\url{https://github.com/mjgreen/opensesame-workshop/archive/master.zip}}
+\marginnote{This handout, and all examples referred to in it, can be downloaded from \url{https://github.com/mjgreen/opensesame-workshop}}
 \tableofcontents
+
+
+
 
 \section{The simplest case of an experiment}
 Every OpenSesame experiment is organised around a few core notions: \textbf{stimulus}, \textbf{instructions}, and \textbf{response}.
-%The simplest possible experiment presents one stimulus and collects one response.
+
 
 \subsection{Problem specification}
 Let's imagine that we want to know whether the word \emph{war} is associated with positive or negative emotions.
@@ -74,56 +82,6 @@ OpenSesame experiments can be visualised as flowcharts. Figure (\ref{simplestcas
 From now on I will use the shorthand \textbf{osexp} to mean "OpenSesame experiment": in the same way that the file extension for a jpeg photo is ".jpeg", the file extension for an opensesame experiment is ".osexp".
 
 You can now download the first osexp that we will use in the workshop: \url{https://mjgreen.github.io/opensesame_workshop_BU/examples/example_01_the_simplest_case.osexp}
-
-\clearpage
-\section{Appendix}
-\appendix
-
-This is a minimal flowchart.
-
-\begin{figure}
-\centering
-\begin{tikzpicture}[node distance = 2cm, auto]
-\node [cloud] (init) {Start};
-\node [cloud, below of=init] (stopping) {Stop};
-\tikzstyle{line} = [draw, -latex']
-\path [line] (init) -- (stopping);
-\end{tikzpicture}
-\end{figure}
-
-This is a fully specified flowchart you can steal from.
-
-\begin{figure}
-\centering
-% Define block styles
-\tikzstyle{decision} = [diamond, draw, fill=blue!20, text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=10em, text centered, rounded corners, minimum height=4em]
-\tikzstyle{line} = [draw, -latex']
-\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm, minimum height=1em]
-     
-\begin{tikzpicture}[node distance = 2cm, auto]
-% Place nodes
-\node [cloud, text width=5em, text badly centered] (init) {Start};
-\node [block, below of=init] (assign) {i = 1};
-\node [block, below of=assign] (increment) {increment i by 2};
-\node [block, left of=increment, node distance=3cm, text width=5em, fill=red!20] (incBy9) {increment i by 9};
-\node [block, below of=increment] (functionCall) {perform the function};
-\node [decision, below of=functionCall] (evenOddCheck) {is i even or odd};
-\node [cloud, below of=evenOddCheck] (stopping) {program closed then STOP};
- 
-% Draw edges
-\path [line] (init) -- (assign);
-\path [line] (assign) -- (increment);
-\path [line] (increment) -- (functionCall);
-\path [line] (functionCall) -- (evenOddCheck);
-\path [line] (evenOddCheck) -| node [near start] {No} (incBy9);
-\path [line] (incBy9) |- (assign);
-\path [line] (evenOddCheck) |- (stopping);
-\path [line] (evenOddCheck) -- ++(2.8cm,0cm) |- node [near start] {Yes} (assign);
- 
-\end{tikzpicture}
-\caption{Problem formulation and the process} \label{fig:M1}
-\end{figure}
 
 \end{document}
 

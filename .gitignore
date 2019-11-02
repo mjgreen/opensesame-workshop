@@ -5,8 +5,10 @@
 *.bib
 *.bbl
 *.blg
+*.dvi
 *.log
 *.out
 *.toc
+*.synctex.gz
 # csv files from running the experiments
 *.csv
