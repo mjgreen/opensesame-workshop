@@ -2,7 +2,9 @@
 .idea
 # Latex's waste by-products
 *.aux
+*.bib
 *.bbl
 *.blg
 *.log
 *.out
+*.toc
