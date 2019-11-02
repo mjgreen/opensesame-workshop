@@ -2,7 +2,7 @@
 .idea
 # Latex by-products
 *.aux
-*.bib
+#*.bib
 *.bbl
 *.blg
 *.dvi
