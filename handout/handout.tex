@@ -1,7 +1,10 @@
 \documentclass[a4paper]{tufte-handout}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{hyperref}
 
 \title{OpenSesame workshop handout \& workbook}
-\date{ Wednesday 6th November 5pm -- 7pm} % without \date command, current date is supplied
+\date{Wednesday 6th November 5pm -- 7pm} % without \date command, current date is supplied
 \author{Matt Green}
 
 %\geometry{showframe} % display margins for debugging page layout
@@ -28,45 +31,98 @@
 %\newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
 
 \begin{document}
-
 \bibliographystyle{plain}
 \nobibliography{handout}
-
-\maketitle% this prints the handout title, author, and date
-
-\begin{abstract}
-\noindent
-\textbf{Intended Learning Outcomes:} at the end of this workshop you should have acquired basic competence with using OpenSesame, and you should be able to use the available OpenSesame-specific documentation, online tutorials, and online forums to build upon that basic competence.
-I think that most beginners should be able to reach a point where they can create a simple stimulus-response experiment from scratch, having had no previous experience.
-I think that most of those people would also be able to reach a point where they can take a more complicated template experiment, and adjust it until it produces the behaviour required for, say, a final year project experiment.
-\end{abstract}
-
+\maketitle
 \tableofcontents
 
-\section{Timeline}
-\label{sec:timeline}
+\section{The simplest case of an experiment}
+Every OpenSesame experiment is organised around a few core notions: \textbf{stimulus}, \textbf{instructions}, and \textbf{response}.
+%The simplest possible experiment presents one stimulus and collects one response.
 
-\begin{table}[ht]
-  \centering
-  \fontfamily{ppl}\selectfont
-  \begin{tabular}{lcll}
-    \toprule
-    Time & Activity & Duration & \\
-    \midrule
-    17:00 -- 17:30 & Part 1 & 30 mins &       \\
-    17:30 -- 17:40 & break  & 10 mins &  \\
-    \addlinespace
-    17:40 -- 18:20 & Part 2 & 40 mins &       \\
-    18:20 -- 18:30 & break  & 10 mins & \\
-    \addlinespace
-    18:30 -- 19:00 & Part 3 & 30 mins &       \\
-    \bottomrule
-  \end{tabular}
-  \caption{Timeline}
-  \label{tab:timeline}
-%  \zsavepos{pos:normaltab}
-\end{table}
+\subsection{Problem specification}
+Let's imagine that we want to know whether the word \emph{war} is associated with positive or negative emotions.
 
+\subsection{Solution in plain English}
+We need to present the word (in this example the word \emph{war}) for some length of time (in this example it is 5 seconds); then instruct the participant what keys they can press (in this example it is \emph{n} for negative, or \emph{p} for positive); and then collect a response from the keyboard, only allowing \emph{n} for negative, or \emph{p} for positive).
+
+\subsection{Solution as flowchart}
+OpenSesame experiments can be visualised as flowcharts. Figure (\ref{simplestcase}) is the flowchart for this particular example, the simplest case of a stimulus-response experiment.
+\begin{figure}[!htbp]
+\centering
+\tikzstyle{block} = [rectangle, draw, text width=15em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse, node distance=2cm, minimum height=1em]
+\begin{tikzpicture}[node distance = 2cm, auto]
+\node [cloud] (init) {Start};
+\node [block, below of=init] (stimulus) {\textbf{Stimulus:} present the word \emph{war} for 5 seconds};
+\node [block, below of=stimulus] (instruct) {\textbf{Instructions:} say what the response keys are};
+\node [block, below of=instruct] (collect) {\textbf{Response:} collect keyboard response, \emph{p} or \emph{n}};
+\node [cloud, below of=collect] (stopping) {Stop};
+\path [line] (init) -- (stimulus);
+\path [line] (stimulus) -- (instruct);
+\path [line] (instruct) -- (collect);
+\path [line] (collect) -- (stopping);
+\caption{Simplest stimulus-response experiment, presented as a flowchart}
+\label{simplestcase}
+\end{tikzpicture}
+\end{figure}
+
+\FloatBarrier
+\subsection{Solution as OpenSesame experiment (.osexp)}
+From now on I will use the shorthand \textbf{osexp} to mean "OpenSesame experiment": in the same way that the file extension for a jpeg photo is ".jpeg", the file extension for an opensesame experiment is ".osexp".
+
+You can now download the first osexp that we will use in the workshop: \url{example_01_the_simplest_case.osexp}
+
+\clearpage
+\section{Appendix}
+\appendix
+
+This is a minimal flowchart.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[node distance = 2cm, auto]
+\node [cloud] (init) {Start};
+\node [cloud, below of=init] (stopping) {Stop};
+\tikzstyle{line} = [draw, -latex']
+\path [line] (init) -- (stopping);
+\end{tikzpicture}
+\end{figure}
+
+This is a fully specified flowchart you can steal from.
+
+\begin{figure}
+\centering
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, text width=5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm, minimum height=1em]
+     
+\begin{tikzpicture}[node distance = 2cm, auto]
+% Place nodes
+\node [cloud, text width=5em, text badly centered] (init) {Start};
+\node [block, below of=init] (assign) {i = 1};
+\node [block, below of=assign] (increment) {increment i by 2};
+\node [block, left of=increment, node distance=3cm, text width=5em, fill=red!20] (incBy9) {increment i by 9};
+\node [block, below of=increment] (functionCall) {perform the function};
+\node [decision, below of=functionCall] (evenOddCheck) {is i even or odd};
+\node [cloud, below of=evenOddCheck] (stopping) {program closed then STOP};
+ 
+% Draw edges
+\path [line] (init) -- (assign);
+\path [line] (assign) -- (increment);
+\path [line] (increment) -- (functionCall);
+\path [line] (functionCall) -- (evenOddCheck);
+\path [line] (evenOddCheck) -| node [near start] {No} (incBy9);
+\path [line] (incBy9) |- (assign);
+\path [line] (evenOddCheck) |- (stopping);
+\path [line] (evenOddCheck) -- ++(2.8cm,0cm) |- node [near start] {Yes} (assign);
+ 
+\end{tikzpicture}
+\caption{Problem formulation and the process} \label{fig:M1}
+\end{figure}
 
 \end{document}
 
