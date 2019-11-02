@@ -33,21 +33,20 @@
 %\newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
 
 \begin{document}
-%\bibliographystyle{plain}
-%\nobibliography{handout}
+\bibliographystyle{plain}
+\nobibliography{handout}
 \maketitle
-%\begin{abstract}\url{https://github.com/mjgreen/opensesame-workshop/archive/master.zip}\end{abstract}
-%\sidenote{\url{https://github.com/mjgreen/opensesame-workshop/archive/master.zip}}
-%\marginnote{\url{https://github.com/mjgreen/opensesame-workshop/archive/master.zip}}
 \marginnote{This handout, and all examples referred to in it, can be downloaded from \url{https://github.com/mjgreen/opensesame-workshop}}
 \tableofcontents
 
-
-
+\section{Getting Started}
+\begin{enumerate}
+\item \textbf{Download the workshop's supporting files:} these are  all the examples, and a copy of this handout: go to: \url{https://github.com/mjgreen/opensesame-workshop}. Look for the green button that says "Clone or Download". When you click it, it will offer you "Download ZIP": click on that, and when the zip file has downloaded, extract it somewhere you will be able to find (maybe the Desktop, or a folder in your home drive). If you don't know how to extract a zip file, right-click on the zip file and choose "extract all", then browse to the folder you want to use. It's important to get these files before we start, so if you need help, interrupt me and I will come and help you.
+\item \textbf{Open up the OpenSesame program:} In P105, it is part of \emph{AppsAnywhere}. Be patient and only click the link once, otherwise you will get multiple instances of the program open up, which can be confusing. Again, stop me and get help if you have any trouble doing that, so that everyone has the program open before we go any further.
+\end{enumerate}
 
 \section{The simplest case of an experiment}
 Every OpenSesame experiment is organised around a few core notions: \textbf{stimulus}, \textbf{instructions}, and \textbf{response}.
-
 
 \subsection{Problem specification}
 Let's imagine that we want to know whether the word \emph{war} is associated with positive or negative emotions.
@@ -57,7 +56,7 @@ We need to present the word (in this example the word \emph{war}) for some lengt
 
 \subsection{Solution as flowchart}
 OpenSesame experiments can be visualised as flowcharts. Figure (\ref{simplestcase}) is the flowchart for this particular example, the simplest case of a stimulus-response experiment.
-\begin{figure}[!htbp]
+\begin{figure}
 \centering
 \tikzstyle{block} = [rectangle, draw, text width=15em, text centered, rounded corners, minimum height=4em]
 \tikzstyle{line} = [draw, -latex']
@@ -77,11 +76,12 @@ OpenSesame experiments can be visualised as flowcharts. Figure (\ref{simplestcas
 \end{tikzpicture}
 \end{figure}
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{Solution as OpenSesame}
-From now on I will use the shorthand \textbf{osexp} to mean "OpenSesame experiment": in the same way that the file extension for a jpeg photo is ".jpeg", the file extension for an opensesame experiment is ".osexp".
+Go to your OpenSesame window, and do \texttt{File -> Open}, then browse to the folder where you extracted the suporting materials, and choose the following file: \texttt{example-01-the-simplest-case.osexp}
 
-You can now download the first osexp that we will use in the workshop: \url{https://mjgreen.github.io/opensesame_workshop_BU/examples/example_01_the_simplest_case.osexp}
+\marginnote{\textbf{.osexp} is the file extension for OpenSesame experiments, in the same way that \textbf{.jpeg} is the file extension for jpeg photos}
+
 
 \end{document}
 
