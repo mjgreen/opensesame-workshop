@@ -123,21 +123,54 @@ You are aiming to answer the following questions:
 
 \section{More realistic cases: multiple trials using sequences and loops}
 \subsection{sequencing}
+A sequence is just a list of things that happen one after another. 
+Figure (\ref{example-01-png}) shows a simple sequence.
+Sometimes we want to add an item to the sequence. Using the view in Figure (\ref{example-01-png}), we can either clisk the green plus icon in the right hand side view, or drag 'n' drop an item from the icons into the list-view on the left hand side.
+
 \subsection{looping}
+A loop is just a way of running a seqence more than once.
 
-\section{Stimulus types available}
+\begin{figure}[hbtp]
+\centering
+\tikzstyle{block} = [rectangle, draw, text width=15em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse, node distance=2cm, minimum height=1em]
+\tikzstyle{decision} = [diamond, draw, text width=5em, text badly centered, node distance=2.5cm, inner sep=0pt]
+\begin{tikzpicture}[node distance = 2cm, auto]
+\node [cloud] (init) {Start};
+\node [block, below of=init] (stimulus) {\textbf{Stimulus:} present the stimulus for 5 seconds};
+\node [block, below of=stimulus] (instruct) {\textbf{Instructions:} say what the response keys are};
+\node [block, below of=instruct] (collect) {\textbf{Response:} collect keyboard response, \emph{p} or \emph{n}};
+\node [decision, below of=collect, fill=blue!20] (loopfinished) {trials all run?};
+\node [block, right of=stimulus, node distance=5cm, text width=10em, fill=blue!20] (nextup) {next trial};
+\node [cloud, below of=loopfinished, node distance=2.5cm] (stopping) {Stop};
 
-\section{Response types available}
+\path [line] (init) -- (stimulus);
+\path [line] (stimulus) -- (instruct);
+\path [line] (instruct) -- (collect);
+\path [line] (collect) -- (loopfinished);
+\path [line] (loopfinished) - ++(0cm,-1.5cm) -| node {Yes} (stopping);
+\path [line, color=blue] (loopfinished) - ++(2.8cm,0cm) -| node [near start] {No} (nextup);
+\path [line, color=blue] (nextup) -- (stimulus);
+\path [line] (loopfinished) -- (stopping);
+\caption{Simple stimulus-response experiment, presented as a flowchart, with the extension to the case of a loop marked up in blue}
+\label{simplestcase}
+\end{tikzpicture}
+\end{figure}
 
-\section{Feedback to participants}
-
-\section{Eye-tracking (on any tracker)}
-
-\section{Counterbalancing, and other uses of python)}
-
-\section{Cross-platform support}
-
-\section{Some comparisons of OpenSesame against alternative software}
+%\section{Stimulus types available}
+%
+%\section{Response types available}
+%
+%\section{Feedback to participants}
+%
+%\section{Eye-tracking (on any tracker)}
+%
+%\section{Counterbalancing, and other uses of python)}
+%
+%\section{Cross-platform support}
+%
+%\section{Some comparisons of OpenSesame against alternative software}
 
 %\bibliography{handout}
 
